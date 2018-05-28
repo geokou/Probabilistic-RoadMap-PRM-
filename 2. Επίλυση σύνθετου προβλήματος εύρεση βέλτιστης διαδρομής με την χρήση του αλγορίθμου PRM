@@ -1,0 +1,29 @@
+
+filePath = fullfile(fileparts(which('PathPlanningExample')),'data','exampleMaps.mat');
+load(filePath)
+map = robotics.BinaryOccupancyGrid(complexMap, 1)
+show(map)
+
+
+robotRadius = 0.2;
+mapInflated = copy(map);
+inflate(mapInflated,robotRadius);
+show(mapInflated)
+
+
+prm = robotics.PRM
+prm.Map = mapInflated;
+prm.NumNodes = 20;
+prm.ConnectionDistance = 15;
+show(prm)
+
+
+startLocation = [3 3];
+endLocation = [45 35];
+path = findpath(prm, startLocation, endLocation);
+while isempty(path);
+prm.NumNodes = prm.NumNodes + 10;
+update(prm);
+path = findpath(prm, startLocation, endLocation);
+end;
+show(prm);
